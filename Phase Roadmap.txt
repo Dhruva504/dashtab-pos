@@ -1,0 +1,13 @@
+## Phase Roadmap (High Level)
+
+| Phase | Focus | Deliverable |
+|-------|-------|-------------|
+| **Phase 1** (this plan) | Foundation + Core POS | Login → Menu → Orders → Kitchen → Payment → Receipt |
+| Phase 2 | Floor & Table Management | Floor editor, table status, dine-in workflow |
+| Phase 3 | Inventory & Suppliers | Stock, recipes, ingredients, purchase orders |
+| Phase 4 | Reporting & Analytics | Daily/monthly sales, tax reports, dashboards |
+| Phase 5 | Customer & Loyalty | Customer database, loyalty points, gift cards |
+| Phase 6 | Advanced Features | Shifts, cash drawer, daily closing, reservations |
+| Phase 7 | Fiscal Compliance | Verifactu, TicketBAI, QR codes, AEAT integration |
+| Phase 8 | Cloud & Multi-Branch | Multi-branch, franchise, advanced sync |
+| Phase 9 | Integrations | Delivery platforms, accounting, payment gateways |

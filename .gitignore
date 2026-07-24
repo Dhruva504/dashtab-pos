@@ -1,0 +1,52 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.docstates
+
+# NuGet
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Flutter
+dashtab_pos/.dart_tool/
+dashtab_pos/.packages
+dashtab_pos/build/
+dashtab_pos/.flutter-plugins
+dashtab_pos/.flutter-plugins-dependencies
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.local
+appsettings.*.local.json
+
+# Docker
+docker/pgdata/
+
+# Test results
+TestResults/
+coverage/

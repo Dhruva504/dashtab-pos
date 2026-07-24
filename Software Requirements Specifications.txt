@@ -1,0 +1,672 @@
+# Restaurant POS SaaS - Master Development Instructions
+
+## Project Objective
+
+We are building a **commercial-grade cloud Restaurant Management & POS Software**.
+
+This is **NOT** a college project or a simple POS.
+
+The software must be designed from Day 1 as a scalable SaaS platform that can eventually support thousands of restaurants.
+
+The first deployment will be in a family restaurant for production testing.
+
+After successful validation, the same software will be commercialized for restaurants, cafés, bars, bakeries, pizzerias, food trucks, hotels and restaurant chains.
+
+Everything must therefore be designed with long-term scalability, maintainability and extensibility in mind.
+
+---
+
+# Important Development Philosophy
+
+This project has a GitHub repository selected as a **reference implementation**.
+
+Repository: [https://github.com/ahmedali5530/restaurant-pos]
+
+This repository **is NOT our codebase**.
+
+Do NOT clone it and continue development.
+
+Do NOT tightly couple our software to it.
+
+Instead, use it as a professional reference library.
+
+Study its:
+
+* UI/UX
+* User workflows
+* Business logic
+* POS interactions
+* Modules
+* Components
+* Functions
+* Calculations
+* Printing workflows
+* Order flow
+* Inventory flow
+* Reports
+* Screen layouts
+
+Reuse ideas whenever they improve productivity.
+
+If a module in the repository is well designed, recreate similar functionality inside our own architecture.
+
+The repository exists to save development time, not to define our architecture.
+
+Our software must remain completely independent.
+
+---
+
+# General Development Principles
+
+Always prefer:
+
+* clean architecture
+* modular code
+* reusable components
+* SOLID principles
+* production-quality code
+* scalability
+* maintainability
+* testability
+
+Avoid:
+
+* duplicated code
+* hardcoded values
+* business logic inside UI
+* tightly coupled modules
+* shortcuts that make future development difficult
+
+Every feature should be designed assuming more features will be added later.
+
+---
+
+# Overall Architecture
+
+Backend ASP.NET Core (.NET 9)
+
+Database PostgreSQL
+
+API REST API
+
+Authentication JWT + Refresh Tokens
+
+Desktop Flutter Desktop
+
+Mobile Flutter
+
+Kitchen Display Flutter
+
+Admin Dashboard Flutter Web
+
+Cloud AWS or Azure
+
+Docker
+
+Nginx
+
+PostgreSQL
+
+Redis
+
+Object Storage
+
+S3 compatible
+
+---
+
+# Architecture Style
+
+Use a layered architecture.
+
+Presentation
+
+↓
+
+Application
+
+↓
+
+Domain
+
+↓
+
+Infrastructure
+
+Business logic must never depend on UI.
+
+Database implementation must never affect business logic.
+
+Everything should be replaceable.
+
+---
+
+# SaaS First Design
+
+This software MUST be SaaS ready from Day One.
+
+Do NOT build a single restaurant application first.
+
+Every module must support multiple restaurants.
+
+Every database entity must support tenant isolation.
+
+Examples:
+
+Restaurant
+
+Users
+
+Products
+
+Orders
+
+Tables
+
+Inventory
+
+Reports
+
+Customers
+
+Settings
+
+Everything must be tenant-aware.
+
+No assumptions should ever exist that there is only one restaurant.
+
+---
+
+# Offline First
+
+Offline mode is mandatory.
+
+Restaurant should continue operating even without internet.
+
+Requirements:
+
+* Local cache
+* Offline orders
+* Offline billing
+* Automatic synchronization
+* Conflict resolution
+* Retry queue
+* Background sync
+
+---
+
+# Security
+
+Implement:
+
+JWT authentication
+
+Refresh tokens
+
+Password hashing
+
+HTTPS
+
+Role-based authorization
+
+Permission-based authorization
+
+Audit logging
+
+Automatic backups
+
+Session expiration
+
+Activity logging
+
+---
+
+# User Roles
+
+Administrator
+
+Manager
+
+Cashier
+
+Waiter
+
+Kitchen
+
+Permissions must be configurable.
+
+Never hardcode permissions.
+
+---
+
+# Core Modules
+
+Authentication
+
+Restaurant Configuration
+
+Restaurant Profile
+
+Branch Management
+
+Floor Management
+
+Table Management
+
+Reservations
+
+Menu Categories
+
+Products
+
+Modifiers
+
+Combos
+
+Kitchen Order Tickets
+
+Kitchen Display
+
+Orders
+
+Split Bills
+
+Discounts
+
+Taxes
+
+Payments
+
+Cash
+
+Card
+
+Bizum
+
+Refunds
+
+Receipts
+
+Invoice Printing
+
+Daily Closing
+
+Shift Management
+
+Cash Drawer
+
+Inventory
+
+Recipes
+
+Ingredients
+
+Stock
+
+Suppliers
+
+Purchase Orders
+
+Customer Database
+
+Loyalty
+
+Gift Cards
+
+Reports
+
+Analytics
+
+Audit Logs
+
+Settings
+
+Notification System
+
+Cloud Sync
+
+Automatic Backup
+
+---
+
+# Future Modules
+
+Design architecture so these can be added later without rewriting.
+
+QR Ordering
+
+Online Ordering
+
+Reservations
+
+Employee Attendance
+
+Kitchen Display System
+
+AI Reports
+
+Demand Forecasting
+
+Supplier Automation
+
+Voice Ordering
+
+Multi Branch
+
+Franchise Support
+
+API Integrations
+
+Payment Gateways
+
+Delivery Platforms
+
+Accounting Software
+
+---
+
+# Spain Specific Features
+
+Support:
+
+IVA
+
+Sequential Invoice Numbering
+
+Digital Invoice Export
+
+Fiscal Audit Trail
+
+Verifactu compatibility
+
+Future legal compliance
+
+Do not hardcode tax rules.
+
+Everything should be configurable.
+
+---
+
+# Database Design
+
+Normalize the database.
+
+Avoid duplication.
+
+Use foreign keys.
+
+Implement soft delete where appropriate.
+
+Every important table should include:
+
+CreatedAt
+
+UpdatedAt
+
+DeletedAt (where applicable)
+
+CreatedBy
+
+UpdatedBy
+
+TenantId
+
+Audit metadata
+
+Use migrations.
+
+Never manually modify production schema.
+
+---
+
+# Coding Standards
+
+Meaningful naming
+
+Small functions
+
+Reusable services
+
+Dependency Injection
+
+Async programming
+
+Proper exception handling
+
+Logging
+
+Configuration through settings
+
+No magic numbers
+
+No hardcoded strings
+
+No commented-out code
+
+---
+
+# UI / UX
+
+Professional
+
+Modern
+
+Fast
+
+Touchscreen friendly
+
+Keyboard friendly
+
+Dark Mode ready
+
+Responsive
+
+Minimal clicks
+
+Large touch targets
+
+Fast navigation
+
+Use the reference repository whenever it contains a better workflow.
+
+Improve it where possible.
+
+---
+
+# Performance
+
+Fast startup
+
+Minimal API calls
+
+Pagination
+
+Lazy loading
+
+Efficient database queries
+
+Caching
+
+Background processing
+
+Indexed database
+
+Connection pooling
+
+---
+
+# Printing
+
+Support:
+
+80mm Thermal Printer
+
+Kitchen Printer
+
+Cash Drawer
+
+Barcode Scanner
+
+Customer Display
+
+Touchscreen
+
+Payment Terminal (future)
+
+Printing templates should be configurable.
+
+---
+
+# Reports
+
+Daily Sales
+
+Monthly Sales
+
+Product Sales
+
+Category Sales
+
+Waiter Performance
+
+Inventory
+
+Waste
+
+Profit
+
+Tax Reports
+
+IVA Reports
+
+Cash Closing
+
+Shift Reports
+
+Custom Reports
+
+---
+
+# Inventory
+
+Stock movements
+
+Recipe costing
+
+Automatic deduction
+
+Purchase Orders
+
+Supplier Management
+
+Low Stock Alerts
+
+Inventory valuation
+
+Waste tracking
+
+---
+
+# Development Workflow
+
+Before implementing any module:
+
+1. Study how the reference repository solves it.
+2. Understand the workflow.
+3. Identify improvements.
+4. Design our implementation.
+5. Build it using our own architecture.
+6. Write clean documentation.
+7. Test thoroughly.
+
+Never copy code blindly.
+
+Understand first.
+
+Implement second.
+
+---
+
+# Code Quality
+
+Every Pull Request should satisfy:
+
+Clean code
+
+No warnings
+
+No unused code
+
+No duplicated logic
+
+Consistent naming
+
+Proper documentation
+
+Unit tests where appropriate
+
+---
+
+# Documentation
+
+Maintain documentation throughout development.
+
+Include:
+
+Architecture
+
+Database Schema
+
+API Documentation
+
+Deployment Guide
+
+Installation Guide
+
+Developer Guide
+
+User Manual
+
+Configuration Guide
+
+---
+
+# Deliverables
+
+Complete source code
+
+Database schema
+
+Migration scripts
+
+API documentation
+
+Deployment documentation
+
+Installation guide
+
+Developer documentation
+
+User documentation
+
+Automated tests
+
+Production-ready build
+
+Docker deployment
+
+---
+
+# Non-Negotiable Rules
+
+* Do NOT build a temporary solution that will need rewriting later.
+* Do NOT tightly couple modules.
+* Do NOT hardcode business rules.
+* Do NOT assume only one restaurant.
+* Do NOT blindly copy the reference repository.
+* Use the repository only as inspiration and productivity acceleration.
+* Always prioritize clean architecture over quick implementation.
+* Every design decision should consider future SaaS commercialization.
+* If there is a choice between a quick fix and a scalable solution, choose the scalable solution.
+
+The objective is not just to create a POS. The objective is to build a modern, commercial-grade Restaurant Management SaaS platform capable of competing with established products in the Spanish market while remaining maintainable, extensible, and production-ready for years to come.

@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: dashtab-api
+    env: docker
+    region: ohio # Change as needed
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ConnectionStrings__DefaultConnection
+        sync: false # Set this value manually in the Render dashboard!
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production

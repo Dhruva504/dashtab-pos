@@ -48,7 +48,11 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader());
 });
 
-// ─── Database ─────────────────────────────────────────────────────────────────
+// ─── Database ─────────────────────────────────────────────────────────────────// Register Infrastructure
+builder.Services.Configure<Microsoft.AspNetCore.Identity.PasswordHasherOptions>(options =>
+{
+    options.IterationCount = 10000;
+});
 builder.Services.AddDbContext<DashTabDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),

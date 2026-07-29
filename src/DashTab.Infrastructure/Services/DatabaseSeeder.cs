@@ -33,7 +33,8 @@ public static class DatabaseSeeder
             // Fix placeholder password hashes
             // The test data file uses 'hashed_password_string_here' as a placeholder.
             // We replace it with a real hash for the default demo password 'demo1234'.
-            var hasher = new PasswordHasher<string>();
+            // Using 10,000 iterations for performance on Render Free Tier.
+            var hasher = new PasswordHasher<string>(new Microsoft.Extensions.Options.OptionsWrapper<PasswordHasherOptions>(new PasswordHasherOptions { IterationCount = 10000 }));
             var demoHash = hasher.HashPassword("user", "demo1234");
 
             // Use raw SQL to avoid tenant-filter complications during seeding

@@ -5,7 +5,7 @@ using DashTab.Application.Features.Auth.Commands;
 namespace DashTab.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;

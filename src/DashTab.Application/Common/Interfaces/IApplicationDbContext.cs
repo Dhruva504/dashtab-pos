@@ -5,6 +5,7 @@ namespace DashTab.Application.Common.Interfaces;
 
 public interface IApplicationDbContext
 {
+    DbSet<Tenant> Tenants { get; }
     DbSet<Floor> Floors { get; }
     DbSet<Table> Tables { get; }
     DbSet<Category> Categories { get; }

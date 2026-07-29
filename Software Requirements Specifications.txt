@@ -81,40 +81,6 @@ Every feature should be designed assuming more features will be added later.
 
 ---
 
-# Overall Architecture
-
-Backend ASP.NET Core (.NET 9)
-
-Database PostgreSQL
-
-API REST API
-
-Authentication JWT + Refresh Tokens
-
-Desktop Flutter Desktop
-
-Mobile Flutter
-
-Kitchen Display Flutter
-
-Admin Dashboard Flutter Web
-
-Cloud AWS or Azure
-
-Docker
-
-Nginx
-
-PostgreSQL
-
-Redis
-
-Object Storage
-
-S3 compatible
-
----
-
 # Architecture Style
 
 Use a layered architecture.
@@ -280,8 +246,6 @@ Payments
 Cash
 
 Card
-
-Bizum
 
 Refunds
 

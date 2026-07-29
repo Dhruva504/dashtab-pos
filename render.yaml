@@ -5,8 +5,17 @@ services:
     region: ohio # Change as needed
     plan: free
     dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
     envVars:
       - key: ConnectionStrings__DefaultConnection
         sync: false # Set this value manually in the Render dashboard!
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: JwtSettings__Secret
+        sync: false # Set a long random string in Render dashboard
+      - key: JwtSettings__Issuer
+        value: DashTab
+      - key: JwtSettings__Audience
+        value: DashTabApp
+      - key: JwtSettings__ExpiryMinutes
+        value: 480

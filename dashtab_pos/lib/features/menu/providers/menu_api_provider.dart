@@ -33,10 +33,13 @@ class MenuNotifier extends AsyncNotifier<List<MenuCategory>> {
   @override
   Future<List<MenuCategory>> build() async {
     try {
-      final response = await ref.read(apiClientProvider).dio.get('/menu');
-      return (response.data as List).map((c) => MenuCategory.fromJson(c)).toList();
+      final response =
+          await ref.read(apiClientProvider).dio.get('/menu/categories');
+      return (response.data as List)
+          .map((c) => MenuCategory.fromJson(c))
+          .toList();
     } catch (e) {
-      // Fallback for empty DB during development
+      // Return empty list on error — POS screen shows 'No menu categories found'
       return [];
     }
   }

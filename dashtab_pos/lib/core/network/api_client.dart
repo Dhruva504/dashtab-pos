@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../config/app_config.dart';
+import '../storage/local_storage.dart';
 
 class ApiClient {
   late final Dio _dio;
@@ -17,13 +18,26 @@ class ApiClient {
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        // TODO: Inject Authorization header here from secure storage
-        // String? token = await getAccessToken();
-        // if (token != null) options.headers['Authorization'] = 'Bearer $token';
+        // Inject JWT Bearer token
+        final token = await SecureStorage.getAccessToken();
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+
+        // Inject X-Tenant-Id header for backend multi-tenancy middleware
+        final tenantId = await SecureStorage.getTenantId();
+        if (tenantId != null && tenantId.isNotEmpty) {
+          options.headers['X-Tenant-Id'] = tenantId;
+        }
+
         return handler.next(options);
       },
       onError: (DioException e, handler) async {
-        // TODO: Handle token refresh logic here
+        // On 401 (token expired/invalid), clear auth data
+        if (e.response?.statusCode == 401) {
+          await SecureStorage.clearAll();
+          // The router redirect will handle navigation to /login
+        }
         return handler.next(e);
       },
     ));

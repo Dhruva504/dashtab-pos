@@ -30,11 +30,21 @@ public class GlobalExceptionMiddleware
     private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        context.Response.StatusCode = exception switch
+        {
+            UnauthorizedAccessException => (int)HttpStatusCode.Forbidden,
+            InvalidOperationException => (int)HttpStatusCode.BadRequest,
+            _ => (int)HttpStatusCode.InternalServerError,
+        };
 
         var response = new
         {
-            error = "An unexpected error occurred.",
+            error = exception switch
+            {
+                UnauthorizedAccessException => "Forbidden",
+                InvalidOperationException => "Bad request",
+                _ => "An unexpected error occurred.",
+            },
             detail = exception.Message
         };
 

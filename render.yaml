@@ -7,15 +7,21 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
+      # PostgreSQL connection string for the Supabase backend database.
+      # Format: Host=<db-host>;Database=postgres;Username=postgres;Password=<db-password>
+      # Use the "Connection string (direct)" from Supabase → Project Settings → Database.
       - key: ConnectionStrings__DefaultConnection
-        sync: false # Set this value manually in the Render dashboard!
+        sync: false # Set this value manually in the Render dashboard (Supabase DB connection string)
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: JwtSettings__Secret
-        sync: false # Set a long random string in Render dashboard
-      - key: JwtSettings__Issuer
-        value: DashTab
-      - key: JwtSettings__Audience
-        value: DashTabApp
-      - key: JwtSettings__ExpiryMinutes
-        value: 480
+      # Supabase JWT secret (used to validate Supabase access tokens on backend endpoints).
+      # Find it in Supabase → Project Settings → API → JWT Secret.
+      - key: Supabase__JwtSecret
+        sync: false # Set to the Supabase JWT secret in the Render dashboard
+      # Supabase service-role key (used for server-to-server business operations).
+      # NEVER expose this to Flutter. Find in Supabase → Project Settings → API.
+      - key: Supabase__ServiceRoleKey
+        sync: false # Set to the Supabase service_role key in the Render dashboard
+      # Supabase project URL (https://<ref>.supabase.co) for storage/API calls.
+      - key: Supabase__Url
+        sync: false # Set to your Supabase project URL

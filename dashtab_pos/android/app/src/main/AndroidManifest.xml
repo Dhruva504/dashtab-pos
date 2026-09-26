@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The app talks to Supabase and the reports API over the network. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="dashtab_pos"
         android:name="${applicationName}"

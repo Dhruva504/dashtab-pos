@@ -2,13 +2,14 @@ namespace DashTab.Domain.Enums;
 
 public enum OrderStatus
 {
-    Draft = 0,
-    Open = 1,
-    Paid = 2,
-    PartiallyPaid = 3,
-    Voided = 4,
-    Refunded = 5,
-    Closed = 6
+    Open = 0,
+    SentToKitchen = 1,
+    PartiallyServed = 2,
+    Served = 3,
+    Closed = 4,
+    Cancelled = 5,
+    Paid = 6,
+    Refunded = 7
 }
 
 public enum OrderType

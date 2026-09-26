@@ -2,24 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'core/routing/app_router.dart';
+import 'core/shell/home_shell.dart';
+import 'core/supabase/supabase_client.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeSupabase();
   runApp(const ProviderScope(child: DashTabApp()));
 }
 
 class DashTabApp extends ConsumerWidget {
-  const DashTabApp({Key? key}) : super(key: key);
+  const DashTabApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Using AppRouter.router (with static redirect doesn't have access to
-    // Riverpod; the redirect reads from SecureStorage directly in auth_provider)
+    final router = ref.watch(routerProvider);
+    final isDark = ref.watch(themeModeProvider);
     return MaterialApp.router(
       title: 'DashTab POS',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      routerConfig: AppRouter.router,
+      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
     );
   }

@@ -44,6 +44,18 @@ Thumbs.db
 *.local
 appsettings.*.local.json
 
+# Secrets / access tokens — never commit these
+*token*.txt
+*credentials*.txt
+Github and Supabase access token.txt
+
+# Local notes / scratch dumps (not part of the product)
+/I
+/das
+/dasht
+/dashtab
+.freebuff/
+
 # Docker
 docker/pgdata/
 

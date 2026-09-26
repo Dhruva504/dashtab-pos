@@ -1,11 +1,7 @@
 using System.Text;
 using DashTab.Api.Middleware;
 using DashTab.Application.Common.Interfaces;
-using DashTab.Domain.Common;
-using DashTab.Domain.Interfaces;
 using DashTab.Infrastructure.Data;
-using DashTab.Infrastructure.Data.Repositories;
-using DashTab.Infrastructure.MultiTenancy;
 using DashTab.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +20,7 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "DashTab POS API", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header. Enter: Bearer {token}",
+        Description = "Supabase JWT Authorization header. Enter: Bearer {token}",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -40,19 +36,29 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader());
+    options.AddPolicy("DashTabCors", policy =>
+    {
+        if (allowedOrigins.Length > 0)
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        }
+        else
+        {
+            // Fallback for development: allow all
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        }
+    });
 });
 
-// ─── Database ─────────────────────────────────────────────────────────────────// Register Infrastructure
-builder.Services.Configure<Microsoft.AspNetCore.Identity.PasswordHasherOptions>(options =>
-{
-    options.IterationCount = 10000;
-});
+// ─── Database (schema is owned by supabase/migrations; the API is read/report-only) ──
 builder.Services.AddDbContext<DashTabDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -60,28 +66,27 @@ builder.Services.AddDbContext<DashTabDbContext>(options =>
     ));
 builder.Services.AddScoped<IApplicationDbContext>(p => p.GetRequiredService<DashTabDbContext>());
 
-// ─── Multi-Tenancy ────────────────────────────────────────────────────────────
-builder.Services.AddScoped<ITenantContext, TenantContext>();
-
 // ─── Infrastructure Services ──────────────────────────────────────────────────
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IDateTimeProvider, DateTimeProvider>();
-builder.Services.AddScoped<ITokenService, JwtTokenService>();
+builder.Services.AddScoped<DashTab.Application.Common.Interfaces.ICurrentUserService, DashTab.Api.Services.CurrentUserService>();
 
-// Generic repository — IRepository<T> → Repository<T> for any T : BaseEntity
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+// ─── Business Services ────────────────────────────────────────────────────────
+builder.Services.AddScoped<DashTab.Application.Services.IReportService, DashTab.Application.Services.ReportService>();
+builder.Services.AddScoped<DashTab.Application.Services.IAnalyticsService, DashTab.Application.Services.AnalyticsService>();
+builder.Services.AddScoped<DashTab.Application.Services.IInvoiceService, DashTab.Application.Services.InvoiceService>();
+builder.Services.AddScoped<DashTab.Application.Services.ITaxService, DashTab.Application.Services.TaxService>();
+builder.Services.AddScoped<DashTab.Application.Services.INotificationService, DashTab.Application.Services.NotificationService>();
+builder.Services.AddScoped<DashTab.Application.Services.IIntegrationService, DashTab.Application.Services.IntegrationService>();
+builder.Services.AddScoped<DashTab.Application.Services.IForecastService, DashTab.Application.Services.ForecastService>();
 
-// ─── MediatR (scans DashTab.Application assembly) ────────────────────────────
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(DashTab.Application.Features.Auth.Commands.LoginCommand).Assembly));
+// ─── Supabase JWT Bearer Authentication ──────────────────────────────────────
+var supabaseSettings = builder.Configuration.GetSection("Supabase");
+var supabaseJwtSecret = supabaseSettings["JwtSecret"]
+    ?? throw new InvalidOperationException("Supabase:JwtSecret must be configured.");
 
-// ─── AutoMapper (scans DashTab.Application assembly) ─────────────────────────
-builder.Services.AddAutoMapper(typeof(DashTab.Application.Features.Menu.MenuMappingProfile).Assembly);
-
-// ─── JWT Bearer Authentication ────────────────────────────────────────────────
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secret = jwtSettings["Secret"]
-    ?? throw new InvalidOperationException("JwtSettings:Secret must be configured.");
-
+// Supabase JWT uses HS256 with the JWT secret from the Supabase dashboard.
+// The JWT contains claims: sub (user id), role, aud (authenticated), exp, iat, etc.
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -91,14 +96,12 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
+        ValidateIssuer = false,          // Supabase doesn't set a standard issuer
+        ValidateAudience = false,        // Supabase uses 'aud' claim but not as OAuth audience
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-        ClockSkew = TimeSpan.Zero
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(supabaseJwtSecret)),
+        ClockSkew = TimeSpan.FromSeconds(30)
     };
 });
 
@@ -106,9 +109,6 @@ builder.Services.AddAuthorization();
 
 // ─────────────────────────────────────────────────────────────────────────────
 var app = builder.Build();
-
-// Seed / migrate database on startup
-await DatabaseSeeder.SeedAsync(app.Services);
 
 // ─── Pipeline ─────────────────────────────────────────────────────────────────
 app.UseGlobalExceptionMiddleware();
@@ -118,10 +118,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DashTab POS API v1"));
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
-
-// Tenant middleware must run before auth so tenant is set from header
-app.UseTenantMiddleware();
+app.UseCors("DashTabCors");
 
 app.UseAuthentication();
 app.UseAuthorization();

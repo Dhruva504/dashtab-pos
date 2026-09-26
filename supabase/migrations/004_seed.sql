@@ -1,0 +1,11 @@
+-- ============================================================
+-- DashTab POS – Seed Data
+--
+-- Intentionally empty: workspaces are provisioned on the first
+-- login of each new account by the `bootstrap_tenant` function
+-- (008_launch_schema.sql), which seeds the payment methods, IVA
+-- rates, default floor/tables and branch for that workspace.
+--
+-- There is deliberately no shared demo tenant: every production
+-- workspace is real and isolated by RLS.
+-- ============================================================
